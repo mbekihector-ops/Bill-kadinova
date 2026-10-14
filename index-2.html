@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b1727">
+  <title>Bill KadiNova | Digital Invitations</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .card-preview-canvas {
+      width: 100%;
+      height: 220px;
+      border-radius: 12px 12px 0 0;
+      object-fit: cover;
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #d4af37;
+      font-weight: bold;
+      text-align: center;
+      padding: 15px;
+      position: relative;
+      overflow: hidden;
+    }
+    .luxury-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(212, 175, 55, 0.2);
+      border: 1px solid #d4af37;
+      color: #ffd700;
+      padding: 3px 8px;
+      font-size: 11px;
+      border-radius: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand-mobile"><span class="logo">♡</span><span>Bill KadiNova <small>Digital Invitations</small></span></div>
+    <div class="language" aria-label="Chagua lugha">
+      <button id="swBtn" class="active" onclick="setLanguage('sw')">🇹🇿 Kiswahili</button>
+      <button id="enBtn" onclick="setLanguage('en')">🇬🇧 English</button>
+    </div>
+    <div class="tools" aria-label="Zana">
+      <span title="Tafuta">⌕</span>
+      <button type="button" id="openAuth" class="account-trigger" title="Akaunti" data-sw="♙ Ingia / Sajili" data-en="♙ Sign in / Register">♙ Ingia / Sajili</button>
+      <span title="Kikapu">♧</span>
+    </div>
+  </div>
+  <div class="layout">
+    <aside>
+      <div class="brand"><div class="logo">✉</div><div><h1>Bill KadiNova</h1><small>Digital Invitations</small></div></div>
+      <nav>
+        <button class="active" data-sw="⌂  Nyumbani" data-en="⌂  Home">⌂  Nyumbani</button>
+        <button data-sw="▣  Kadi za Mwaliko" data-en="▣  Invitation Cards">▣  Kadi za Mwaliko</button>
+        <button data-sw="☑  Unda Mwaliko Wako" data-en="☑  Create Your Invitation">☑  Unda Mwaliko Wako</button>
+        <button data-sw="＄  Maelezo ya Bei" data-en="＄  Pricing">＄  Maelezo ya Bei</button>
+        <button data-sw="▱  Malipo" data-en="▱  Payments">▱  Malipo</button>
+        <button data-sw="☏  Wasiliana Nasi" data-en="☏  Contact Us">☏  Wasiliana Nasi</button>
+      </nav>
+      <div class="quote" data-sw="“Mialiko ya Kidijitali kwa matukio yako maalum”" data-en="“Digital invitations for your special moments”">“Mialiko ya Kidijitali kwa matukio yako maalum”</div>
+    </aside>
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow" data-sw="Karibu kwenye" data-en="Welcome to">Karibu kwenye</p>
+          <h2>Bill KadiNova <span>Digital Invitations</span></h2>
+          <p data-sw="Tengeneza mialiko ya kipekee kwa matukio yako yote muhimu." data-en="Create beautiful invitations for all your important moments.">Tengeneza mialiko ya kipekee kwa matukio yako yote muhimu.</p>
+          <button class="primary" onclick="showMessage('browse')" data-sw="▧  Tazama Kadi za Mwaliko  →" data-en="▧  Browse Invitation Cards  →">▧  Tazama Kadi za Mwaliko  →</button>
+        </div>
+      </section>
+
+      <section class="categories" aria-label="Aina za matukio">
+        <button class="category" onclick="filterCategory('harusi')"><span class="emoji">♡</span><span data-sw="Harusi (50+)" data-en="Wedding (50+)">Harusi (50+)</span></button>
+        <button class="category" onclick="filterCategory('kuzaliwa')"><span class="emoji">🎂</span><span data-sw="Kuzaliwa (50+)" data-en="Birthday (50+)">Kuzaliwa (50+)</span></button>
+        <button class="category" onclick="filterCategory('mahafali')"><span class="emoji">🎓</span><span data-sw="Mahafali (50+)" data-en="Graduation (50+)">Mahafali (50+)</span></button>
+        <button class="category" onclick="filterCategory('baby')"><span class="emoji">👶</span><span data-sw="Baby Shower (50+)" data-en="Baby Shower (50+)">Baby Shower (50+)</span></button>
+        <button class="category" onclick="filterCategory('culture')"><span class="emoji">🏛</span><span data-sw="Mila na Desturi" data-en="Cultural">Mila na Desturi</span></button>
+        <button class="category" onclick="filterCategory('business')"><span class="emoji">💼</span><span data-sw="Biashara" data-en="Business">Biashara</span></button>
+      </section>
+
+      <section>
+        <div class="section-heading">
+          <div><h2 data-sw="Kadi Maarufu za Kifahari" data-en="Popular Luxury Cards">Kadi Maarufu za Kifahari</h2><p data-sw="Chagua muonekano unaokufaa kisha ubinafsishe kulingana na mahitaji yako." data-en="Choose a design you love and personalize it for your event.">Chagua muonekano unaokufaa kisha ubinafsishe kulingana na mahitaji yako.</p></div>
+          <button class="link-btn" onclick="showMessage('all')" data-sw="Tazama Zote (250+)  →" data-en="View All (250+)  →">Tazama Zote (250+) →</button>
+        </div>
+        <div class="cards" id="cardsContainer">
+          <article class="card" tabindex="0" role="button" onclick="openCardModal('Mwaliko wa Harusi – Royal Gold', 'harusi')">
+            <div class="card-preview-canvas" style="background: linear-gradient(135deg, #2c160c 0%, #0b1727 100%); border: 2px solid #d4af37;">
+              <span class="luxury-badge">VIP Gold</span>
+              <div>
+                <h4 style="color: #ffd700; font-family: serif; font-size: 1.2rem; margin-bottom: 5px;">Mwaliko wa Harusi – 01</h4>
+                <p style="font-size: 0.85rem; color: #f3f4f6;">Floral & Velvet Gold Design</p>
+              </div>
+            </div>
+            <h3>Mwaliko wa Harusi – 01</h3><p class="price" data-price="15">$15.00</p><button class="buy" onclick="event.stopPropagation(); openCardModal('Mwaliko wa Harusi – 01', 'harusi')">🛒 Chagua & Jaza</button>
+          </article>
+
+          <article class="card" tabindex="0" role="button" onclick="openCardModal('Mwaliko wa Kuzaliwa – Rose Gold', 'birthday')">
+            <div class="card-preview-canvas" style="background: linear-gradient(135deg, #3b0730 0%, #1f1025 100%); border: 2px solid #e11d48;">
+              <span class="luxury-badge" style="border-color: #e11d48; color: #f43f5e;">Rose Luxury</span>
+              <div>
+                <h4 style="color: #fda4af; font-family: serif; font-size: 1.2rem; margin-bottom: 5px;">Mwaliko wa Kuzaliwa – 01</h4>
+                <p style="font-size: 0.85rem; color: #f3f4f6;">Sparkle & Ribbon Style</p>
+              </div>
+            </div>
+            <h3>Mwaliko wa Kuzaliwa – 01</h3><p class="price" data-price="10">$10.00</p><button class="buy" onclick="event.stopPropagation(); openCardModal('Mwaliko wa Kuzaliwa – 01', 'birthday')">🛒 Chagua & Jaza</button>
+          </article>
+
+          <article class="card" tabindex="0" role="button" onclick="openCardModal('Mwaliko wa Masomo – Emerald VIP', 'graduation')">
+            <div class="card-preview-canvas" style="background: linear-gradient(135deg, #022c22 0%, #064e3b 100%); border: 2px solid #10b981;">
+              <span class="luxury-badge" style="border-color: #10b981; color: #34d399;">Emerald VIP</span>
+              <div>
+                <h4 style="color: #6ee7b7; font-family: serif; font-size: 1.2rem; margin-bottom: 5px;">Mwaliko wa Masomo – 01</h4>
+                <p style="font-size: 0.85rem; color: #f3f4f6;">Classic Graduation Frame</p>
+              </div>
+            </div>
+            <h3>Mwaliko wa Masomo – 01</h3><p class="price" data-price="10">$10.00</p><button class="buy" onclick="event.stopPropagation(); openCardModal('Mwaliko wa Masomo – 01', 'graduation')">🛒 Chagua & Jaza</button>
+          </article>
+
+          <article class="card" tabindex="0" role="button" onclick="openCardModal('Mwaliko wa Mtoto – Pastel Soft', 'baby')">
+            <div class="card-preview-canvas" style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); border: 2px solid #818cf8;">
+              <span class="luxury-badge" style="border-color: #818cf8; color: #a5b4fc;">Soft Pastel</span>
+              <div>
+                <h4 style="color: #c7d2fe; font-family: serif; font-size: 1.2rem; margin-bottom: 5px;">Mwaliko wa Mtoto – 01</h4>
+                <p style="font-size: 0.85rem; color: #f3f4f6;">Cute & Elegant Baby Shower</p>
+              </div>
+            </div>
+            <h3>Mwaliko wa Mtoto – 01</h3><p class="price" data-price="10">$10.00</p><button class="buy" onclick="event.stopPropagation(); openCardModal('Mwaliko wa Mtoto – 01', 'baby')">🛒 Chagua & Jaza</button>
+          </article>
+        </div>
+      </section>
+
+      <section class="contact" id="contact">
+        <h2 data-sw="Wasiliana Nasi" data-en="Contact Us">Wasiliana Nasi</h2>
+        <p data-sw="Una swali au unahitaji kadi ya mwaliko maalum? Wasiliana na mmiliki wa KadiNova." data-en="Have a question or need a custom invitation? Contact the owner of KadiNova.">Una swali au unahitaji kadi ya mwaliko maalum? Wasiliana na mmiliki wa Bill KadiNova.</p>
+        <p class="owner"><strong data-sw="Mmiliki:" data-en="Owner:">Mmiliki:</strong> Philemon Abraham Simkanga</p>
+        <div class="contact-grid">
+          <div class="contact-item"><strong data-sw="Barua pepe" data-en="Email">Barua pepe</strong><a href="mailto:phicharyknowledge@gmail.com">phicharyknowledge@gmail.com</a></div>
+          <div class="contact-item"><strong data-sw="Simu" data-en="Phone">Simu</strong><a href="tel:+255656025211">+255 656 025 211</a></div>
+          <div class="contact-item"><strong>WhatsApp</strong><a href="https://wa.me/255656025211" target="_blank" rel="noopener noreferrer">+255 656 025 211 · <span data-sw="Tuma ujumbe" data-en="Message us">Tuma ujumbe</span></a></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="cardModal" hidden>
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal-close" type="button" id="closeModal" aria-label="Funga">×</button>
+      <p class="modal-kicker" data-sw="KADI YA MWALIKO YA KIFAHARI" data-en="LUXURY INVITATION CARD">KADI YA MWALIKO YA KIFAHARI</p>
+      <h2 id="modalTitle">Kadi ya Mwaliko</h2>
+      <p id="modalDescription" class="modal-description">Jaza taarifa za tukio lako ili kuona muonekano wa moja kwa moja.</p>
+
+      <form id="inviteForm">
+        <label><span data-sw="Jina la mwenye mwaliko / tukio" data-en="Host or event name">Jina la mwenye mwaliko / tukio</span><input name="eventName" required maxlength="80" placeholder="Mf. Asha na Juma"></label>
+        <div class="form-row">
+          <label><span data-sw="Tarehe ya tukio" data-en="Event date">Tarehe ya tukio</span><input name="eventDate" type="date" required></label>
+          <label><span data-sw="Muda" data-en="Time">Muda</span><input name="eventTime" type="time"></label>
+        </div>
+        <label><span data-sw="Mahali pa tukio" data-en="Event venue">Mahali pa tukio</span><input name="venue" required maxlength="120" placeholder="Mf. Dar es Salaam"></label>
+        <label><span data-sw="Ujumbe wa ziada (si lazima)" data-en="Extra message (optional)">Ujumbe wa ziada (si lazima)</span><textarea name="message" rows="3" maxlength="250" placeholder="Karibu kushiriki nasi..."></textarea></label>
+        <div class="modal-actions">
+          <button class="primary" type="submit" data-sw="Tengeneza muhtasari" data-en="Create preview">Tengeneza muhtasari</button>
+          <button class="secondary" type="button" id="shareInvite" data-sw="Shiriki WhatsApp" data-en="Share WhatsApp">Shiriki WhatsApp</button>
+        </div>
+      </form>
+
+      <div id="invitePreview" class="invite-preview" hidden style="background: #111827; border: 2px solid #d4af37; padding: 20px; border-radius: 12px; margin-top: 15px; text-align: center; color: #fff;"></div>
+      <button class="secondary flip-preview-btn" type="button" id="flipPreview" hidden data-sw="↻ Ficha muhtasari" data-en="↻ Hide preview">↻ Ficha muhtasari</button>
+      <p class="modal-note" data-sw="Hii ni hatua ya majaribio. Malipo ya moja kwa moja bado hayajaunganishwa." data-en="This is a test flow. Live payments are not connected yet.">Hii ni hatua ya majaribio. Malipo ya moja kwa moja bado hayajaunganishwa.</p>
+    </section>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+  <script src="script.js" defer></script>
+  <script>
+    function openCardModal(title, category) {
+      const modal = document.getElementById('cardModal');
+      document.getElementById('modalTitle').innerText = title;
+      modal.hidden = false;
+    }
+    document.getElementById('closeModal').addEventListener('click', () => {
+      document.getElementById('cardModal').hidden = true;
+    });
+    function filterCategory(cat) {
+      alert("Inafungua kategoria ya kadi: " + cat.toUpperCase() + " (Miundo 50+ ya kipekee)");
+    }
+  </script>
+</body>
+</html>
