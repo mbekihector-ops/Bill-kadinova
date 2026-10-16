@@ -283,22 +283,5 @@ const instruction = document.getElementById('payInstruction');
 details.style.display = 'block';
 instruction.textContent = `Lipa kwa ${payType}: Namba ya Kampuni 888999 (KadiNova Bundle 50)`;
 };
-});
+;
  
-document.getElementById('confirmPayBtn').onclick = () => {
-const val = document.getElementById('payPhoneInput').value;
-if (!val) {
-toast('Tafadhali weka namba ya simu au muamala!');
-return;
-}
-document.getElementById('paymentFeedback').textContent = '✅ Malipo yamehakikiwa! Sasa una uwezo wa kutumia na kupakua kadi zote 50 za kila kategoria.';
-toast('Umefanikiwa kufungua kifurushi kamili!');
-};
-});
- 
-function toast(msg) {
-const el = document.getElementById('toast');
-el.textContent = msg;
-el.style.display = 'block';
-setTimeout(() => el.style.display = 'none', 3000);
-}
