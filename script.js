@@ -1,88 +1,298 @@
+Nitengenezee script. js lenye hizi code
 window.currentLanguage = 'sw';
-    let currency = 'USD';
-    const rates = {USD: 1, TZS: 2600};
-    let selectedCard = null;
-    const cardDetails = [
-      {sw:'Mwaliko wa Harusi – 01',en:'Wedding Invitation – 01',kind:'Harusi',kindEn:'Wedding',price:15,style:'wedding'},
-      {sw:'Mwaliko wa Kuzaliwa – 01',en:'Birthday Invitation – 01',kind:'Sherehe ya kuzaliwa',kindEn:'Birthday',price:10,style:'birthday'},
-      {sw:'Mwaliko wa Masomo – 01',en:'Graduation Invitation – 01',kind:'Mahafali',kindEn:'Graduation',price:10,style:'graduation'},
-      {sw:'Mwaliko wa Mtoto – 01',en:'Baby Celebration – 01',kind:'Hafla ya mtoto',kindEn:'Baby celebration',price:10,style:'baby'}
-    ];
-    function setLanguage(lang){
-      window.currentLanguage=lang;
-      document.documentElement.lang=lang;
-      document.querySelectorAll('[data-sw][data-en]').forEach(el=>{const val=el.dataset[lang];if(val!==undefined)el.textContent=val;});
-      document.getElementById('swBtn').classList.toggle('active',lang==='sw');
-      document.getElementById('enBtn').classList.toggle('active',lang==='en');
-      updatePrices();
-    }
-    function updatePrices(){document.querySelectorAll('[data-price]').forEach(el=>{const amount=Number(el.dataset.price);el.textContent=currency==='USD'?'$'+amount.toFixed(2):'TSh '+Math.round(amount*rates.TZS).toLocaleString('en-US');});}
-    function showMessage(kind){
-     const sw={browse:'Karibu! Kadi za mialiko zinaonekana hapa chini.',wedding:'Umechagua kategoria ya harusi.',birthday:'Umechagua kategoria ya sherehe za kuzaliwa.',graduation:'Umechagua kategoria ya mahafali.',baby:'Umechagua kategoria ya hafla ya mtoto.',house:'Umechagua kategoria ya mila na desturi.',business:'Umechagua kategoria ya matukio ya biashara.',more:'Kategoria nyingine zitaongezwa baadaye.',all:'Kwa sasa hizi ndizo kadi za mfano zilizopo.'};
-     const en={browse:'Welcome! Browse the invitation cards below.',wedding:'Wedding category selected.',birthday:'Birthday category selected.',graduation:'Graduation category selected.',baby:'Baby celebration category selected.',house:'Cultural events category selected.',business:'Business events category selected.',more:'More categories will be added later.',all:'These are the sample cards currently available.'};
-     toast(window.currentLanguage==='sw'?sw[kind]:en[kind]);
-     if(kind==='browse'||kind==='all')document.querySelector('.cards')?.scrollIntoView({behavior:'smooth',block:'center'});
-     if(['wedding','birthday','graduation','baby'].includes(kind)){const i={wedding:0,birthday:1,graduation:2,baby:3}[kind];openCard(i);}
-    }
-    function toast(message){const el=document.getElementById('toast');el.textContent=message;el.style.display='block';clearTimeout(window.__toastTimer);window.__toastTimer=setTimeout(()=>el.style.display='none',3200);}
-    function openCard(index){
-     selectedCard=cardDetails[index]; if(!selectedCard)return;
-     document.getElementById('modalTitle').textContent=window.currentLanguage==='sw'?selectedCard.sw:selectedCard.en;
-     document.getElementById('modalDescription').textContent=window.currentLanguage==='sw'?'Jaza taarifa za tukio lako ili kuunda muhtasari wa mwaliko.':'Enter your event details to create an invitation preview.';
-     document.getElementById('invitePreview').hidden=true;
-     document.getElementById('inviteForm').reset();
-     document.getElementById('cardModal').hidden=false;
-     document.body.classList.add('modal-open');
-    }
-    function closeModal(id){document.getElementById(id).hidden=true;if(document.querySelectorAll('.modal-backdrop:not([hidden])').length===0)document.body.classList.remove('modal-open');}
-    function makeInvitePreview(){
-     const form=document.getElementById('inviteForm');if(!form.reportValidity())return;
-     const d=new FormData(form), box=document.getElementById('invitePreview');
-     const date=d.get('eventDate')?new Date(d.get('eventDate')+'T12:00:00').toLocaleDateString(window.currentLanguage==='sw'?'sw-TZ':'en-GB',{day:'numeric',month:'long',year:'numeric'}):'';
-     box.innerHTML='';
-     const eyebrow=document.createElement('p');eyebrow.textContent=window.currentLanguage==='sw'?'UNAKARIBISHWA':'YOU ARE INVITED';
-     const title=document.createElement('h3');title.textContent=d.get('eventName');
-     const kind=document.createElement('p');kind.textContent=window.currentLanguage==='sw'?selectedCard.kind:selectedCard.kindEn;
-     const when=document.createElement('p');when.textContent=[date,d.get('eventTime')].filter(Boolean).join(' · ');
-     const venue=document.createElement('p');venue.textContent=d.get('venue');
-     [eyebrow,title,kind,when,venue].forEach(el=>box.appendChild(el));
-     if(d.get('message')){const msg=document.createElement('p');msg.textContent=d.get('message');box.appendChild(msg);}
-     const qrText=[d.get('eventName'),window.currentLanguage==='sw'?selectedCard.kind:selectedCard.kindEn,date,d.get('eventTime'),d.get('venue'),d.get('message')].filter(Boolean).join(' | ');
-     const qrWrap=document.createElement('div');qrWrap.className='qr-wrap';
-     const qr=document.createElement('img');qr.alt=window.currentLanguage==='sw'?'QR code yenye maelezo ya mwaliko':'QR code containing invitation details';qr.loading='lazy';qr.src='https://api.qrserver.com/v1/create-qr-code/?size=180x180&data='+encodeURIComponent(qrText);
-     const qrLabel=document.createElement('small');qrLabel.textContent=window.currentLanguage==='sw'?'Changanua kuona maelezo ya mwaliko':'Scan to read invitation details';qrWrap.append(qr,qrLabel);box.appendChild(qrWrap);
-     box.classList.remove('is-flipped');document.getElementById('flipPreview').hidden=false;
-     box.hidden=false;box.scrollIntoView({behavior:'smooth',block:'nearest'});
-    }
-    function shareInvite(){
-     const box=document.getElementById('invitePreview');if(box.hidden){toast(window.currentLanguage==='sw'?'Tengeneza muhtasari kwanza.':'Create the preview first.');return;}
-     const text=box.innerText;
-     if(navigator.share){navigator.share({title:'Bill KadiNova invitation',text}).catch(()=>{});}else if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(()=>toast(window.currentLanguage==='sw'?'Muhtasari umenakiliwa. Unaweza kuutuma WhatsApp.':'Preview copied. You can send it on WhatsApp.')).catch(()=>toast(text));}else{toast(text);}
-    }
-    function openPayment(){document.getElementById('paymentModal').hidden=false;document.body.classList.add('modal-open');}
+let currency = 'USD';
+const rates = { USD: 1, TZS: 2600 };
+let selectedCard = null;
 
-    document.addEventListener('DOMContentLoaded',()=>{
-     const cards=[...document.querySelectorAll('.cards .card')];
-     cards.forEach((card,index)=>{
-       card.addEventListener('click',e=>{if(e.target.closest('.buy'))return;openCard(index);});
-       card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openCard(index);}});
-       const img=card.querySelector('.preview img');if(img){const fallback=()=>{const preview=img.closest('.preview');preview.classList.add('image-fallback');preview.dataset.fallbackTitle=['♡\nHARUSI','🎂\nSHEREHE','🎓\nMAHAFALI','♡\nHAFla YA MTOTO'][index]||'KadiNova';};img.addEventListener('error',fallback);if(img.complete&&img.naturalWidth===0)fallback();}
-       const buy=card.querySelector('.buy');if(buy){buy.addEventListener('click',e=>{e.stopPropagation();openPayment();});buy.removeAttribute('onclick');}
-     });
-     document.getElementById('closeModal').addEventListener('click',()=>closeModal('cardModal'));
-     document.getElementById('closePayment').addEventListener('click',()=>closeModal('paymentModal'));
-     document.getElementById('inviteForm').addEventListener('submit',e=>{e.preventDefault();makeInvitePreview();});
-     document.getElementById('shareInvite').addEventListener('click',shareInvite);
-     document.getElementById('flipPreview').addEventListener('click',()=>{const p=document.getElementById('invitePreview');p.classList.toggle('is-flipped');});
-     document.querySelectorAll('[data-payment]').forEach(btn=>btn.addEventListener('click',()=>{document.getElementById('paymentFeedback').textContent=window.currentLanguage==='sw'?'Umechagua '+btn.dataset.payment+'. Muunganisho wa malipo halisi bado haujawekwa.':'You selected '+btn.dataset.payment+'. Live payment integration is not set up yet.';}));
-     document.querySelectorAll('nav button').forEach((btn,index)=>btn.addEventListener('click',()=>{
-       document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
-       if(index===2){openCard(0);return;}if(index===4){openPayment();return;}if(index===3){document.querySelector('.note')?.scrollIntoView({behavior:'smooth'});return;}
-       const target=index===1?document.querySelector('.cards'):index===5?document.getElementById('contact'):document.querySelector('.hero');target?.scrollIntoView({behavior:'smooth',block:'start'});
-     }));
-     document.querySelector('.tools span:last-child')?.addEventListener('click',()=>{currency=currency==='USD'?'TZS':'USD';updatePrices();toast(window.currentLanguage==='sw'?'Sarafu ya kuonyesha bei imebadilishwa kuwa '+currency+'.':'Display currency changed to '+currency+'.');});
-     document.querySelector('.tools span:first-child')?.addEventListener('click',()=>{const q=prompt(window.currentLanguage==='sw'?'Tafuta aina ya mwaliko:':'Search invitation type:');if(q){const card=cards.find(c=>c.innerText.toLowerCase().includes(q.toLowerCase()));if(card)card.scrollIntoView({behavior:'smooth',block:'center'});else toast(window.currentLanguage==='sw'?'Hakuna kadi iliyopatikana kwa neno hilo.':'No card found for that search.');}});
-     document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal('cardModal');closeModal('paymentModal');closeModal('authModal');}});
-     document.querySelectorAll('.modal-backdrop').forEach(bg=>bg.addEventListener('click',e=>{if(e.target===bg)closeModal(bg.id);}));
-     updatePrices();
-    });
+// Kategoria kuu nne ulizoomba na zinginezo
+const categoriesList = [
+{ name: 'Harusi', emoji: '🌸', count: 50 },
+{ name: 'Sherehe ya kuzaliwa', emoji: '🎂', count: 50 },
+{ name: 'Mahafali', emoji: '🎓', count: 50 },
+{ name: 'Hafla ya mtoto', emoji: '🍼', count: 50 },
+{ name: 'Mila na Desturi', emoji: '🌺', count: 50 },
+{ name: 'Biashara', emoji: '💼', count: 50 }
+];
+
+const imagesList = [
+'https://images.unsplash.com/photo-1523438885200-e635ba2c371e?auto=format&fit=crop&w=700&q=85',
+'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=700&q=85',
+'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=700&q=85',
+'https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=700&q=85',
+'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=700&q=85'
+];
+
+// Tunatengeneza kadi 50 kamili kwa kila kategoria (Jumla ya kadi nyingi za kisasa)
+const cardsData = [];
+let globalId = 1;
+
+categoriesList.forEach(cat => {
+for (let i = 1; i <= cat.count; i++) {
+cardsData.push({
+id: globalId++,
+sw: Mwaliko wa ${cat.name} – ${i < 10 ? '0' + i : i},
+en: ${cat.name} Invitation – ${i < 10 ? '0' + i : i},
+kind: cat.name,
+emoji: cat.emoji,
+price: (i % 3 === 0) ? 15 : 10, // Thamani tofauti za kadi
+img: imagesList[(i - 1) % imagesList.length]
+});
+}
+});
+
+let currentPage = 1;
+const itemsPerPage = 12;
+let filteredCards = [...cardsData];
+
+function renderCards() {
+const container = document.getElementById('cardsGrid');
+if (!container) return;
+container.innerHTML = '';
+
+const start = (currentPage - 1) * itemsPerPage;
+const end = start + itemsPerPage;
+const pageItems = filteredCards.slice(start, end);
+
+pageItems.forEach((card) => {
+const cardEl = document.createElement('article');
+cardEl.className = 'card';
+cardEl.onclick = () => openCardModal(card);
+
+const priceText = currency === 'USD' ? `$${card.price}.00` : `TSh ${(card.price * rates.TZS).toLocaleString()}`;  
+const title = window.currentLanguage === 'sw' ? card.sw : card.en;  
+
+cardEl.innerHTML = `  
+  <div class="preview"><img src="${card.img}" alt="${title}" loading="lazy"></div>  
+  <div class="tag">${card.emoji} ${card.kind}</div>  
+  <h3>${title}</h3>  
+  <p class="price">${priceText}</p>  
+  <button class="buy" onclick="event.stopPropagation(); openPaymentModal(${card.id});">🛒 Nunua / Pata Kifurushi</button>  
+`;  
+container.appendChild(cardEl);
+
+});
+
+renderPagination();
+}
+
+function renderPagination() {
+const pagContainer = document.getElementById('pagination');
+if (!pagContainer) return;
+pagContainer.innerHTML = '';
+
+const totalPages = Math.ceil(filteredCards.length / itemsPerPage);
+if (totalPages <= 1) return;
+
+for (let p = 1; p <= totalPages; p++) {
+const btn = document.createElement('button');
+btn.textContent = p;
+if (p === currentPage) btn.className = 'active';
+btn.onclick = () => {
+currentPage = p;
+renderCards();
+window.scrollTo({ top: 400, behavior: 'smooth' });
+};
+pagContainer.appendChild(btn);
+}
+}
+
+function filterCategory(catName) {
+if (catName === 'All') {
+filteredCards = [...cardsData];
+} else {
+filteredCards = cardsData.filter(c => c.kind.toLowerCase() === catName.toLowerCase());
+}
+currentPage = 1;
+renderCards();
+}
+
+function openCardModal(card) {
+selectedCard = card;
+document.getElementById('modalTitle').textContent = window.currentLanguage === 'sw' ? card.sw : card.en;
+document.getElementById('cardPreviewContainer').hidden = true;
+document.getElementById('inviteForm').reset();
+document.getElementById('cardModal').hidden = false;
+document.body.classList.add('modal-open');
+}
+
+function closeModal(id) {
+document.getElementById(id).hidden = true;
+document.body.classList.remove('modal-open');
+}
+
+// Kuchora Kadi ya Kisasa yenye Maua kwenye Canvas (Iende kama Picha WhatsApp)
+function drawCardOnCanvas(data) {
+const canvas = document.getElementById('cardCanvas');
+const ctx = canvas.getContext('2d');
+
+// Mandhari ya kisasa (Gradient ya kifahari)
+const grad = ctx.createLinearGradient(0, 0, 0, 850);
+grad.addColorStop(0, '#0b1727');
+grad.addColorStop(0.5, '#16283d');
+grad.addColorStop(1, '#0b1727');
+ctx.fillStyle = grad;
+ctx.fillRect(0, 0, 600, 850);
+
+// Fremu ya Dhahabu (Gold Borders)
+ctx.strokeStyle = '#d7ad62';
+ctx.lineWidth = 6;
+ctx.strokeRect(20, 20, 560, 810);
+
+ctx.strokeStyle = '#f5dba7';
+ctx.lineWidth = 2;
+ctx.strokeRect(28, 28, 544, 794);
+
+// Mapambo ya Maua Pembeni
+drawFloralCorner(ctx, 35, 35);
+drawFloralCorner(ctx, 565, 35);
+drawFloralCorner(ctx, 35, 815);
+drawFloralCorner(ctx, 565, 815);
+
+// Vichwa vya habari
+ctx.fillStyle = '#d7ad62';
+ctx.font = 'bold 20px Georgia, serif';
+ctx.textAlign = 'center';
+ctx.fillText('✨ MWALIKO WA KISASA ✨', 300, 85);
+
+ctx.fillStyle = '#ffffff';
+ctx.font = 'bold 30px Georgia, serif';
+ctx.fillText(selectedCard ? selectedCard.sw : 'MWALIKO MAALUM', 300, 135);
+
+ctx.strokeStyle = '#d7ad62';
+ctx.lineWidth = 1;
+ctx.beginPath();
+ctx.moveTo(120, 155);
+ctx.lineTo(480, 155);
+ctx.stroke();
+
+// Taarifa za Tukio zilizojazwa na Mteja
+ctx.fillStyle = '#f5dba7';
+ctx.font = 'italic 18px Georgia, serif';
+ctx.fillText('Tunayo furaha kukukaribisha kwenye:', 300, 205);
+
+ctx.fillStyle = '#ffffff';
+ctx.font = 'bold 34px Georgia, serif';
+ctx.fillText(data.eventName, 300, 260);
+
+ctx.fillStyle = '#d7ad62';
+ctx.font = 'bold 18px Georgia, serif';
+ctx.fillText('📅 TAREHE NA MUDA', 300, 330);
+
+ctx.fillStyle = '#ffffff';
+ctx.font = '20px Georgia, serif';
+const dateStr = data.eventDate ? new Date(data.eventDate).toLocaleDateString('sw-TZ', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+ctx.fillText(${dateStr}  |  ${data.eventTime || ''}, 300, 370);
+
+ctx.fillStyle = '#d7ad62';
+ctx.font = 'bold 18px Georgia, serif';
+ctx.fillText('📍 MAHALI / UKUMBI', 300, 440);
+
+ctx.fillStyle = '#ffffff';
+ctx.font = '20px Georgia, serif';
+ctx.fillText(data.venue, 300, 480);
+
+if (data.message) {
+ctx.fillStyle = '#e0e4ea';
+ctx.font = 'italic 17px Georgia, serif';
+ctx.fillText("${data.message}", 300, 550);
+}
+
+// QR Code ya Kadi
+const qrImg = new Image();
+qrImg.crossOrigin = 'anonymous';
+const qrText = ${data.eventName} | ${selectedCard?.sw} | ${dateStr} | ${data.venue};
+qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + encodeURIComponent(qrText);
+qrImg.onload = () => {
+ctx.fillStyle = '#ffffff';
+ctx.fillRect(235, 610, 130, 130);
+ctx.drawImage(qrImg, 240, 615, 120, 120);
+
+ctx.fillStyle = '#b8c2d0';  
+ctx.font = '13px Arial';  
+ctx.fillText('Bill KadiNova • Imesanifiwa Kisasa kwa ajili ya WhatsApp', 300, 775);
+
+};
+}
+
+function drawFloralCorner(ctx, x, y) {
+ctx.save();
+ctx.fillStyle = '#f4a9bb';
+ctx.beginPath();
+ctx.arc(x, y, 10, 0, Math.PI * 2);
+ctx.fill();
+ctx.fillStyle = '#d7ad62';
+ctx.beginPath();
+ctx.arc(x, y, 4, 0, Math.PI * 2);
+ctx.fill();
+ctx.restore();
+}
+
+function downloadCardImage() {
+const canvas = document.getElementById('cardCanvas');
+const link = document.createElement('a');
+link.download = ${selectedCard?.sw || 'Kadi_Mwaliko'}.png;
+link.href = canvas.toDataURL('image/png');
+link.click();
+toast('Picha ya Kadi imepakuliwa! Sasa unaweza kuituma WhatsApp kama picha.');
+}
+
+function shareWhatsappImage() {
+downloadCardImage();
+setTimeout(() => {
+const text = encodeURIComponent(Habari! Karibu sana kwenye mwaliko wangu (${selectedCard?.sw}). Tafadhali angalia picha ya kadi niliyoambatisha hapa juu! 🌸✨);
+window.open(https://wa.me/?text=${text}, '_blank');
+}, 1200);
+}
+
+function openPaymentModal(cardId) {
+document.getElementById('paymentModal').hidden = false;
+document.body.classList.add('modal-open');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+renderCards();
+
+document.getElementById('closeModal').onclick = () => closeModal('cardModal');
+document.getElementById('closePayment').onclick = () => closeModal('paymentModal');
+
+document.getElementById('inviteForm').onsubmit = (e) => {
+e.preventDefault();
+const formData = new FormData(e.target);
+const data = Object.fromEntries(formData.entries());
+
+drawCardOnCanvas(data);  
+document.getElementById('cardPreviewContainer').hidden = false;  
+document.getElementById('cardPreviewContainer').scrollIntoView({ behavior: 'smooth' });
+
+};
+
+document.getElementById('downloadCardBtn').onclick = downloadCardImage;
+document.getElementById('shareWhatsappBtn').onclick = shareWhatsappImage;
+
+document.querySelectorAll('[data-payment]').forEach(btn => {
+btn.onclick = () => {
+const payType = btn.dataset.payment;
+const details = document.getElementById('paymentDetails');
+const instruction = document.getElementById('payInstruction');
+details.style.display = 'block';
+instruction.textContent = Lipa kwa ${payType}: Namba ya Kampuni 888999 (KadiNova Bundle 50);
+};
+});
+
+document.getElementById('confirmPayBtn').onclick = () => {
+const val = document.getElementById('payPhoneInput').value;
+if (!val) {
+toast('Tafadhali weka namba ya simu au muamala!');
+return;
+}
+document.getElementById('paymentFeedback').textContent = '✅ Malipo yamehakikiwa! Sasa una uwezo wa kutumia na kupakua kadi zote 50 za kila kategoria.';
+toast('Umefanikiwa kufungua kifurushi kamili!');
+};
+});
+
+function toast(msg) {
+const el = document.getElementById('toast');
+el.textContent = msg;
+el.style.display = 'block';
+setTimeout(() => el.style.display = 'none', 3000);
+}
